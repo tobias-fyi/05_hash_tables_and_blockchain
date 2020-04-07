@@ -4,7 +4,7 @@ Hash tables :: Assignment
 Linked List hash table key/value pair.
 """
 
-# %%
+
 class LinkedPair:
     def __init__(self, key, value):
         self.key = key
@@ -18,7 +18,6 @@ class LinkedPair:
         return f"<'{self.key}': '{self.value}'>"
 
 
-# %%
 class HashTable:
     """A hash table with `capacity` number of buckets.
     Also accepts string keys.
@@ -125,101 +124,101 @@ class HashTable:
         """Doubles the capacity of the hash table and
         rehash all key/value pairs.
         """
-        # Double the capacity
+        # Put current storage into temporary intermediate array
+        temp_storage = self.storage
+        # Overwrite instance storage with new double-capacity array
         self.capacity *= 2
-        # Allocate new storage array with new capacity
-        new_storage = [None] * self.capacity
-        # Copy elements from previous storage to new
-        for i in range(len(self.storage)):
-            # TODO: rehash the keys
-            new_storage[i] = self.storage[i]
-        # Assign new array as current storage
-        self.storage = new_storage
+        self.storage = [None] * self.capacity
+        # Now that the instance storage is ready,
+        # simply call `insert` on all of the existing pairs
+        # Iterate through current storage, re-inserting all pairs
+        for i in range(len(temp_storage)):
+            if temp_storage[i] is not None:  # If object at index
+                node = temp_storage[i]  # Start with head node
+                while node:  # Iterate through LinkedList at index
+                    # Extract node key and value
+                    key, val = node.key, node.value
+                    # Insert into instance storage
+                    self.insert(key, val)
+                    node = node.next  # Move to next node
 
 
-# %%
-ht = HashTable(8)
+if __name__ == "__main__":
+    ht = HashTable(2)
 
-ht.insert("key-0", "val-0")
-ht.insert("key-1", "val-1")
-ht.insert("key-2", "val-2")
-ht.insert("key-3", "val-3")
-ht.insert("key-4", "val-4")
-ht.insert("key-5", "val-5")
-ht.insert("key-6", "val-6")
-ht.insert("key-7", "val-7")
-ht.insert("key-8", "val-8")
-ht.insert("key-9", "val-9")
+    ht.insert("line_1", "Tiny hash table")
+    ht.insert("line_2", "Filled beyond capacity")
+    ht.insert("line_3", "Linked list saves the day!")
 
-# %%
-return_value = ht.retrieve("key-0")
+    print("")
 
-return_value = ht.retrieve("key-1")
-return_value = ht.retrieve("key-2")
-return_value = ht.retrieve("key-3")
-return_value = ht.retrieve("key-4")
-return_value = ht.retrieve("key-5")
-return_value = ht.retrieve("key-6")
-return_value = ht.retrieve("key-7")
-return_value = ht.retrieve("key-8")
-return_value = ht.retrieve("key-9")
+    # Test storing beyond capacity
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
 
+    # Test resizing
+    old_capacity = len(ht.storage)
+    ht.resize()
+    new_capacity = len(ht.storage)
 
-# %%
-ht = HashTable(2)
+    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-ht.insert("line_1", "Tiny hash table")
-ht.insert("line_2", "Filled beyond capacity")
-ht.insert("line_3", "Linked list saves the day!")
+    # Test if data intact after resizing
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
 
-print("")
+    print("")
 
-# Test storing beyond capacity
-print(ht.retrieve("line_1"))
-print(ht.retrieve("line_2"))
-print(ht.retrieve("line_3"))
+    # === Test 2 === #
+    # ht = HashTable(8)
 
-# Test resizing
-old_capacity = len(ht.storage)
-ht.resize()
-new_capacity = len(ht.storage)
+    # ht.insert("key-0", "val-0")
+    # ht.insert("key-1", "val-1")
+    # ht.insert("key-2", "val-2")
+    # ht.insert("key-3", "val-3")
+    # ht.insert("key-4", "val-4")
+    # ht.insert("key-5", "val-5")
+    # ht.insert("key-6", "val-6")
+    # ht.insert("key-7", "val-7")
+    # ht.insert("key-8", "val-8")
+    # ht.insert("key-9", "val-9")
 
-print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    # return_value = ht.retrieve("key-0")
+    # return_value = ht.retrieve("key-1")
+    # return_value = ht.retrieve("key-2")
+    # return_value = ht.retrieve("key-3")
+    # return_value = ht.retrieve("key-4")
+    # return_value = ht.retrieve("key-5")
+    # return_value = ht.retrieve("key-6")
+    # return_value = ht.retrieve("key-7")
+    # return_value = ht.retrieve("key-8")
+    # return_value = ht.retrieve("key-9")
 
-# %%
-# Test if data intact after resizing
-print(ht.retrieve("line_1"))
-print(ht.retrieve("line_2"))
-print(ht.retrieve("line_3"))
+    # ht = HashTable(2)
 
-print("")
+    # ht.insert("line_1", "Tiny hash table")
+    # ht.insert("line_2", "Filled beyond capacity")
+    # ht.insert("line_3", "Linked list saves the day!")
 
+    # print("")
 
-# %%
-# if __name__ == "__main__":
-#     ht = HashTable(2)
+    # # Test storing beyond capacity
+    # print(ht.retrieve("line_1"))
+    # print(ht.retrieve("line_2"))
+    # print(ht.retrieve("line_3"))
 
-#     ht.insert("line_1", "Tiny hash table")
-#     ht.insert("line_2", "Filled beyond capacity")
-#     ht.insert("line_3", "Linked list saves the day!")
+    # # Test resizing
+    # old_capacity = len(ht.storage)
+    # ht.resize()
+    # new_capacity = len(ht.storage)
 
-#     print("")
+    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-#     # Test storing beyond capacity
-#     print(ht.retrieve("line_1"))
-#     print(ht.retrieve("line_2"))
-#     print(ht.retrieve("line_3"))
+    # # Test if data intact after resizing
+    # print(ht.retrieve("line_1"))
+    # print(ht.retrieve("line_2"))
+    # print(ht.retrieve("line_3"))
 
-#     # Test resizing
-#     old_capacity = len(ht.storage)
-#     ht.resize()
-#     new_capacity = len(ht.storage)
-
-#     print(f"\nResized from {old_capacity} to {new_capacity}.\n")
-
-#     # Test if data intact after resizing
-#     print(ht.retrieve("line_1"))
-#     print(ht.retrieve("line_2"))
-#     print(ht.retrieve("line_3"))
-
-#     print("")
+    # print("")
