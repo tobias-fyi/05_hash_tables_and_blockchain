@@ -12,10 +12,10 @@ class LinkedPair:
         self.next = None
 
     def __str__(self):
-        return f"<'{self.key}': '{self.value}'>"
+        return f"<'{self.key}': '{self.value}' -> next: {self.next}>"
 
     def __repr__(self):
-        return f"<'{self.key}': '{self.value}'>"
+        return f"<'{self.key}': '{self.value}' -> next: {self.next}>"
 
 
 class HashTable:
@@ -118,6 +118,7 @@ class HashTable:
                 if node.key == key:  # If match is found
                     val = node.value  # Set val to node's value
                     break  # If matched, don't keep looping
+                node = node.next  # Move to next node
         return val  # None if nothing found, node.value if found
 
     def resize(self):
@@ -141,6 +142,9 @@ class HashTable:
                     # Insert into instance storage
                     self.insert(key, val)
                     node = node.next  # Move to next node
+
+    def __str__(self):
+        return f"<HashTable with capacity {self.capacity}>"
 
 
 if __name__ == "__main__":
