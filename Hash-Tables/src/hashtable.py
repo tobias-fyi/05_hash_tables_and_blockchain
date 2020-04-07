@@ -73,7 +73,7 @@ class HashTable:
                     # Add new pair to next of current tail / as new tail
                     node.next = new_pair
                 # Continue iteration into next node
-                tail = tail.next
+                node = node.next
 
     def remove(self, key):
         """Remove the value stored with the given key.
