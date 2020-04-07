@@ -104,24 +104,22 @@ class HashTable:
                 # If not, move to next node
                 prev = node
                 node = node.next
-            # Finally, if execution gets this far, no key was found, print warning
+            # If execution gets this far, no key was found, print warning
             print(f"Warning: key '{key}' does not exist.")
 
     def retrieve(self, key):
         """Retrieve the value stored with the given key.
         Returns None if the key is not found.
         """
-        # Take modulo of hash of key to get bucket index
-        index = self._hash_mod(key)
-        # Look up and return the value at that index
-        if self.storage[index] is None:
-            # If no object exists, return None
-            return None
-        else:  # If object exists, compare keys
-            if key == self.storage[index].key:
-                return self.storage[index].value
-            else:
-                return None
+        index = self._hash_mod(key)  # Get bucket index
+        val = self.storage[index]  # Get first value at index
+        if val is not None:  # If object exists
+            node = val  # Start with head as current node
+            while node:  # Look through LinkedList for matching key
+                if node.key == key:  # If match is found
+                    val = node.value  # Set val to node's value
+                    break  # If matched, don't keep looping
+        return val  # None if nothing found, node.value if found
 
     def resize(self):
         """Doubles the capacity of the hash table and
