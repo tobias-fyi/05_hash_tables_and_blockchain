@@ -1,8 +1,3 @@
-"""
-Blockchain :: Day 1 Project
-"""
-
-
 import hashlib
 import json
 from time import time
@@ -11,7 +6,7 @@ from uuid import uuid4
 from flask import Flask, jsonify, request
 
 
-class Blockchain:
+class Blockchain(object):
     def __init__(self):
         self.chain = []
         self.current_transactions = []
@@ -20,7 +15,8 @@ class Blockchain:
         self.new_block(previous_hash=1, proof=100)
 
     def new_block(self, proof, previous_hash=None):
-        """Create a new Block in the Blockchain
+        """
+        Create a new Block in the Blockchain
 
         A block should have:
         * Index
@@ -36,18 +32,18 @@ class Blockchain:
 
         if len(self.chain) > 0:
             block_string = json.dumps(self.last_block, sort_keys=True)
-            guess = f"{block_string}{proof}".encode()
+            guess = f'{block_string}{proof}'.encode()
             current_hash = hashlib.sha256(guess).hexdigest()
         else:
             current_hash = ""
 
         block = {
-            "index": len(self.chain) + 1,
-            "timestamp": time(),
-            "transactions": self.current_transactions,
-            "proof": proof,
-            "previous_hash": previous_hash or self.hash(self.chain[-1]),
-            "hash": current_hash,
+            'index': len(self.chain) + 1,
+            'timestamp': time(),
+            'transactions': self.current_transactions,
+            'proof': proof,
+            'previous_hash': previous_hash or self.hash(self.chain[-1]),
+            'hash': current_hash,
         }
 
         # Reset the current list of transactions
@@ -58,7 +54,8 @@ class Blockchain:
         return block
 
     def hash(self, block):
-        """Creates a SHA-256 hash of a Block
+        """
+        Creates a SHA-256 hash of a Block
 
         :param block": <dict> Block
         "return": <str>
@@ -128,37 +125,41 @@ class Blockchain:
 app = Flask(__name__)
 
 # Generate a globally unique address for this node
-node_identifier = str(uuid4()).replace("-", "")
+node_identifier = str(uuid4()).replace('-', '')
 
 # Instantiate the Blockchain
 blockchain = Blockchain()
 
 
-@app.route("/mine", methods=["GET"])
+@app.route('/mine', methods=['GET'])
 def mine():
     # Run the proof of work algorithm to get the next proof
     proof = blockchain.proof_of_work()
+
     # Forge the new Block by adding it to the chain with the proof
     previous_hash = blockchain.hash(blockchain.last_block)
     block = blockchain.new_block(proof, previous_hash)
 
     response = {
-        "message": "New Block Forged",
-        "index": block["index"],
-        "transactions": block["transactions"],
-        "proof": block["proof"],
-        "previous_hash": block["previous_hash"],
+        'message': "New Block Forged",
+        'index': block['index'],
+        'transactions': block['transactions'],
+        'proof': block['proof'],
+        'previous_hash': block['previous_hash'],
     }
 
     return jsonify(response), 200
 
 
-@app.route("/chain", methods=["GET"])
+@app.route('/chain', methods=['GET'])
 def full_chain():
-    response = {"length": len(blockchain.chain), "chain": blockchain.chain}
+    response = {
+        'length': len(blockchain.chain),
+        'chain': blockchain.chain
+    }
     return jsonify(response), 200
 
 
 # Run the program on port 5000
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
