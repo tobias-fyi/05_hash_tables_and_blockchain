@@ -6,14 +6,18 @@ import json
 
 
 def proof_of_work(block):
-    """
-    Simple Proof of Work Algorithm
+    """Simple Proof of Work Algorithm.
     Stringify the block and look for a proof.
     Loop through possibilities, checking each one against `valid_proof`
     in an effort to find a number that is a valid proof
     :return: A valid proof for the provided block
     """
-    pass
+    # TODO: refactor as function
+    block_string = json.dumps(self.last_block, sort_keys=True)
+    proof = 0
+    while not self.valid_proof(block_string, proof):
+        proof += 1
+    return proof
 
 
 def valid_proof(block_string, proof):
@@ -30,7 +34,7 @@ def valid_proof(block_string, proof):
     pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # What is the server address? IE `python3 miner.py https://server.com/api/`
     if len(sys.argv) > 1:
         node = sys.argv[1]
