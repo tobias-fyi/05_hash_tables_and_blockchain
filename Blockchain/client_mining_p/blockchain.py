@@ -56,6 +56,18 @@ class Blockchain:
         # Return the new block
         return block
 
+    def new_transaction(self, sender: str, recipient: str, amount: float):
+        """Creates a new transaction to go into the next mined Block
+        :param sender: <str> Address of the Recipient
+        :param recipient: <str> Address of the Recipient
+        :param amount: <float> Amount
+        :return: <int> The index of the Block that will hold this transaction
+        """
+        self.current_transactions.append(
+            {"sender": sender, "recipient": recipient, "amount": amount}
+        )
+        return self.last_block["index"] + 1
+
     def hash(self, block):
         """Creates a SHA-256 hash of a Block
 
@@ -137,6 +149,7 @@ def mine():
         # === Validate proof
         last_block_string = json.dumps(blockchain.last_block, sort_keys=True)
         if blockchain.valid_proof(last_block_string, proof):
+
             # Valid: Forge new Block by adding it to the chain with the proof
             previous_hash = blockchain.hash(blockchain.last_block)
             block = blockchain.new_block(proof, previous_hash)
@@ -167,6 +180,22 @@ def full_chain():
 def last_block():
     """Returns only the last block"""
     return jsonify(blockchain.last_block), 200
+
+
+@app.route("/transactions/new", methods=["POST"])
+def new_transaction():
+    values = request.get_json()
+
+    required = ["sender", "recipient", "amount"]
+    if not all(k in values for k in required):
+        return jsonify("Error: Missing values"), 400
+
+    index = blockchain.new_transaction(
+        values["sender"], values["recipient"], values["amount"]
+    )
+
+    response = {"message": f"Transaction will be added to Block {index}"}
+    return jsonify(response), 200
 
 
 # Run the program on port 5000
