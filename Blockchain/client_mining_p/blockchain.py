@@ -194,7 +194,10 @@ def new_transaction():
         values["sender"], values["recipient"], values["amount"]
     )
 
-    response = {"message": f"Transaction will be added to Block {index}"}
+    response = {
+        "message": f"Transaction will be added to Block {index}",
+        "index": index,
+    }
     return jsonify(response), 200
 
 
