@@ -1,5 +1,5 @@
 """
-Blockchain :: Day 1 Project
+Blockchain — Day 1 Project :: Server
 """
 
 import hashlib
@@ -19,7 +19,7 @@ class Blockchain:
         self.new_block(previous_hash=1, proof=100)
 
     def new_block(self, proof, previous_hash=None):
-        """Create a new Block in the Blockchain
+        """Create a new Block in the Blockchain.
 
         A block should have:
         * Index
@@ -28,9 +28,9 @@ class Blockchain:
         * The proof used to mine this block
         * The hash of the previous block
 
-        :param proof: <int> The proof given by the Proof of Work algorithm
-        :param previous_hash: (Optional) <str> Hash of previous Block
-        :return: <dict> New Block
+        :param proof: <int> The proof given by the Proof of Work algorithm.
+        :param previous_hash: (Optional) <str> Hash of previous Block.
+        :return: <dict> New Block.
         """
 
         if len(self.chain) > 0:
@@ -59,8 +59,8 @@ class Blockchain:
     def hash(self, block):
         """Creates a SHA-256 hash of a Block
 
-        :param block": <dict> Block
-        "return": <str>
+        :param block": <dict> Block object.
+        "return": <str> Hashed block string in hexadecimal format.
         """
         # Use json.dumps to convert json into a string
         # Use hashlib.sha256 to create a hash
@@ -76,31 +76,33 @@ class Blockchain:
 
         # Hash the string using sha256
         raw_hash = hashlib.sha256(block_string)
-        hex_hash = raw_hash.hexdigest()
 
         # By itself, the sha256 function returns the hash in a raw string
         # that will likely include escaped characters.
         # This can be hard to read, but .hexdigest() converts the
         # hash to a string of hexadecimal characters, which is
         # easier to work with and understand
-
+        hex_hash = raw_hash.hexdigest()
         # Return the hashed block string in hexadecimal format
         return hex_hash
 
     @property
     def last_block(self):
+        """Returns the block object currently at the end of the chain."""
         return self.chain[-1]
 
     @staticmethod
     def valid_proof(block_string, proof):
-        """Validates the Proof:  Does hash(block_string, proof) contain 3
-        leading zeroes?  Return true if the proof is valid
+        """Validates the Proof.
+        Does hash(block_string, proof) contain 6 leading zeroes?
+        Return true if the proof is valid.
+
         :param block_string: <string> The stringified block to use to
-        check in combination with `proof`
+        check in combination with `proof`.
         :param proof: <int?> The value that when combined with the
         stringified previous block results in a hash that has the
         correct number of leading zeroes.
-        :return: True if the resulting hash is a valid proof, False otherwise
+        :return: True if the resulting hash is a valid proof, False otherwise.
         """
         guess = f"{block_string}{proof}".encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
@@ -117,35 +119,54 @@ node_identifier = str(uuid4()).replace("-", "")
 blockchain = Blockchain()
 
 
-@app.route("/mine", methods=["GET"])
+@app.route("/ping", methods=["GET"])
+def ping():
+    """Endpoint to test API is working."""
+    return jsonify({"status": "active", "message": "pong!"})
+
+
+@app.route("/mine", methods=["POST"])
 def mine():
-    # Run the proof of work algorithm to get the next proof
-    proof = blockchain.proof_of_work()
-    # Forge the new Block by adding it to the chain with the proof
-    previous_hash = blockchain.hash(blockchain.last_block)
-    block = blockchain.new_block(proof, previous_hash)
+    # === Parse and validate request
+    post_data = request.get_json()
+    if "proof" in post_data and "id" in post_data:
+        # If request is valid, get proof and id
+        proof = post_data.get("proof")
+        proof_id = post_data.get("id")
 
-    response = {
-        "message": "New Block Forged",
-        "index": block["index"],
-        "transactions": block["transactions"],
-        "proof": block["proof"],
-        "previous_hash": block["previous_hash"],
-    }
+        # === Validate proof
+        last_block_string = json.dumps(blockchain.last_block, sort_keys=True)
+        if blockchain.valid_proof(last_block_string, proof):
+            # Valid: Forge new Block by adding it to the chain with the proof
+            previous_hash = blockchain.hash(blockchain.last_block)
+            block = blockchain.new_block(proof, previous_hash)
+            response = {
+                "message": "New block successfully forged!",
+                "index": block["index"],
+                "transactions": block["transactions"],
+                "proof": block["proof"],
+                "previous_hash": block["previous_hash"],
+            }
+            return jsonify(response), 200
 
-    return jsonify(response), 200
+        else:  # Proof is not valid
+            return jsonify({"message": "Error: Block already forged."}), 400
+
+    else:  # If "proof" and/or "id" not in request
+        return jsonify({"message": "Error: Invalid request"}), 400
 
 
 @app.route("/chain", methods=["GET"])
 def full_chain():
+    """Returns the full chain of blocks."""
     response = {"length": len(blockchain.chain), "chain": blockchain.chain}
     return jsonify(response), 200
 
 
-@app.route("/lastblock", methods=["GET"])
+@app.route("/last_block", methods=["GET"])
 def last_block():
-    response = {"last_block": blockchain.last_block}
-    return jsonify(response), 200
+    """Returns only the last block"""
+    return jsonify(blockchain.last_block), 200
 
 
 # Run the program on port 5000
