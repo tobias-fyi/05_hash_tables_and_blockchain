@@ -11,10 +11,9 @@ Blockchain — Day 2 Project :: Wallet app
 * Paginate the list of transactions if there are more than ten
 """
 
-# %%
+
 import json
 from pprint import pprint
-import sys
 
 import requests
 
@@ -108,39 +107,31 @@ class User:
         print(f"Updated wallet up to block {self.last_index + 1}")
 
 
-# %%
-# === Instantiate users
-james_bond = User(user_id="007", balance=100.0)
-jane_bond = User(user_id="008", balance=50.0)
-
-# %%
-# === Update wallet
-james_bond.get_transactions()
-jane_bond.get_transactions()
-
-# %%
-# === Print balance
-print(james_bond.balance)
-print(jane_bond.balance)
-
-# %%
 if __name__ == "__main__":
     # === Instantiate users
     james_bond = User(user_id="007", balance=100.0)
     jane_bond = User(user_id="008", balance=50.0)
 
-    # === Update wallet
+    # === Update wallets
     james_bond.get_transactions()
     jane_bond.get_transactions()
 
-    # === Print balance
+    # === Print balances
     print(james_bond.balance)
     print(jane_bond.balance)
 
-    # === Post a new transaction
+    # === Post transactions
     james_bond.post_transaction("008", 1.8)
     jane_bond.post_transaction("007", 0.7)
 
-    # === Post another transaction
+    # === Post transactions
     jane_bond.post_transaction("007", 7.7)
     james_bond.post_transaction("008", 8.8)
+
+    # === Update wallets
+    james_bond.get_transactions()
+    jane_bond.get_transactions()
+
+    # === Print balances
+    print(james_bond.balance)
+    print(jane_bond.balance)
