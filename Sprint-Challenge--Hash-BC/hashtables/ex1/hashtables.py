@@ -1,29 +1,30 @@
+"""
+Hashtables :: Sprint challenge, Part 1
+"""
 
 
-# '''
-# Linked List hash table key/value pair
-# '''
 class LinkedPair:
+    """Linked List hash table key/value pair"""
+
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
 
 
-# '''
-# Resizing hash table
-# '''
 class HashTable:
+    """Resizing hash table."""
+
     def __init__(self, capacity):
         self.capacity = capacity
         self.storage = [None] * capacity
 
 
-# Hash int
 def hash(x, max):
-    x = ((x >> 16) ^ x) * 0x45d9f3b
-    x = ((x >> 16) ^ x) * 0x45d9f3b
-    x = ((x >> 16) ^ x)
+    """Hash int"""
+    x = ((x >> 16) ^ x) * 0x45D9F3B
+    x = ((x >> 16) ^ x) * 0x45D9F3B
+    x = (x >> 16) ^ x
 
     return x % max
 
@@ -31,9 +32,11 @@ def hash(x, max):
 def hash_table_insert(hash_table, key, value):
     index = hash(key, len(hash_table.storage))
 
+    # Start with first node in bucket
     current_pair = hash_table.storage[index]
-    last_pair = None
+    last_pair = None  # Keep track of previous node
 
+    # Iterate through nodes in bucket
     while current_pair is not None and current_pair.key != key:
         last_pair = current_pair
         current_pair = last_pair.next
@@ -71,7 +74,7 @@ def hash_table_retrieve(hash_table, key):
     current_pair = hash_table.storage[index]
 
     while current_pair is not None:
-        if(current_pair.key == key):
+        if current_pair.key == key:
             return current_pair.value
         current_pair = current_pair.next
 
@@ -84,9 +87,7 @@ def hash_table_resize(hash_table):
     for i in range(len(hash_table.storage)):
         current_pair = hash_table.storage[i]
         while current_pair is not None:
-            hash_table_insert(new_hash_table,
-                              current_pair.key,
-                              current_pair.value)
+            hash_table_insert(new_hash_table, current_pair.key, current_pair.value)
             current_pair = current_pair.next
 
     return new_hash_table
