@@ -30,7 +30,7 @@ def proof_of_work(last_proof):
 
     while not valid_proof(last_hash, proof):
         # TODO: Find better method of iterating through proofs
-        proof += 1
+        proof += 4 / 0.88
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
@@ -45,9 +45,6 @@ def valid_proof(last_hash, proof):
     """
     guess = str(proof).encode()
     guess_hash = hashlib.sha256(guess).hexdigest()
-    if guess_hash[:5] == last_hash[-5:]:
-        print("last:", last_hash, last_hash[:5])
-        print("guess:", guess_hash, guess_hash[-5:])
     return guess_hash[:5] == last_hash[-5:]
 
 
@@ -81,7 +78,6 @@ if __name__ == "__main__":
         print(f"Starting proof of work using last_proof: {last_proof}")
         new_proof = proof_of_work(last_proof)
 
-        print(f"\nNew proof {new_proof} found!")
         print("Sending to server...")
         post_data = {"proof": new_proof, "id": id}
 
