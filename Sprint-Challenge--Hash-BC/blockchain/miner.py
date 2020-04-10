@@ -30,7 +30,7 @@ def proof_of_work(last_proof):
 
     while not valid_proof(last_hash, proof):
         # TODO: Find better method of iterating through proofs
-        proof += 4 / 0.88
+        proof *= 4 / 0.88
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
@@ -82,9 +82,6 @@ if __name__ == "__main__":
         last_proof = data.get("proof")
         print(f"Starting proof of work using last_proof: {last_proof}")
         new_proof = proof_of_work(last_proof)
-
-        if new_proof is None:
-            continue
 
         print("Sending to server...")
         post_data = {"proof": new_proof, "id": id}
