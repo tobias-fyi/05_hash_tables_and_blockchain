@@ -30,8 +30,9 @@ def get_indices_of_item_weights(weights, length, limit):
 
         # If match, retrieve indices
         if match:
-            source = hash_table_retrieve(ht, weight)
-            return (source, match) if source > match else (match, source)
+            # source = hash_table_retrieve(ht, weight)
+            # return (source, match) if source > match else (match, source)
+            return (match, index)
 
     # If no match, return None
     return None
@@ -55,15 +56,19 @@ def print_answer(answer):
 # # Since these are the indices of weights 15 and 6 whose sum equals 21
 # output = [3, 1]
 
-# === Tests failed with first pass === #
+# # === Tests failed with first pass === #
 # weights_2 = [4, 4]
 # answer_2 = get_indices_of_item_weights(weights_2, 2, 8)
 
 # assert answer_2[0] == 1
 # assert answer_2[1] == 0
 
+# print(answer_2)
+
 # weights_4 = [12, 6, 7, 14, 19, 3, 0, 25, 40]
 # answer_4 = get_indices_of_item_weights(weights_4, 9, 7)
 
 # assert answer_4[0] == 6
 # assert answer_4[1] == 2
+
+# print(answer_4)
