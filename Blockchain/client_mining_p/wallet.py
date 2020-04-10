@@ -11,6 +11,7 @@ Blockchain — Day 2 Project :: Wallet app
 * Paginate the list of transactions if there are more than ten
 """
 
+# %%
 import json
 from pprint import pprint
 import sys
@@ -49,9 +50,9 @@ class User:
         return self._balance
 
     @balance.setter
-    def balance(self, new_id) -> None:
+    def balance(self, value: float) -> None:
         """Setter function for balance property."""
-        self._balance = new_id
+        self._balance = value
 
     def show_transactions(self) -> None:
         """Displays user's transactions."""
@@ -61,22 +62,24 @@ class User:
         """Posts a new transaction from the user.
         Returns index of block into which transaction was posted."""
         # TODO: Check if user has enough coins
-
-        # Construct the POST object
-        post_data = {
-            "sender": self.user_id,
-            "recipient": recipient,
-            "amount": amt,
-        }
-        # Post transaction to blockchain server
-        r = requests.post(url=self.url + "/transactions/new", json=post_data)
-        # Parse the response
-        if r.status_code == 200:
-            resp = r.json()
-            print(resp.get("message"))
-            return resp.get("index")
+        if self.balance - amt < 0:
+            print("Error: Not enough coins for transaction")
         else:
-            print("Post failed.")
+            # Construct the POST object
+            post_data = {
+                "sender": self.user_id,
+                "recipient": recipient,
+                "amount": amt,
+            }
+            # Post transaction to blockchain server
+            r = requests.post(url=self.url + "/transactions/new", json=post_data)
+            # Parse the response
+            if r.status_code == 200:
+                resp = r.json()
+                print(resp.get("message"))
+                return resp.get("index")
+            else:
+                print("Post failed.")
 
     def get_transactions(self) -> list:
         """Helper function for retrieving all transactions involving user."""
@@ -105,6 +108,22 @@ class User:
         print(f"Updated wallet up to block {self.last_index + 1}")
 
 
+# %%
+# === Instantiate users
+james_bond = User(user_id="007", balance=100.0)
+jane_bond = User(user_id="008", balance=50.0)
+
+# %%
+# === Update wallet
+james_bond.get_transactions()
+jane_bond.get_transactions()
+
+# %%
+# === Print balance
+print(james_bond.balance)
+print(jane_bond.balance)
+
+# %%
 if __name__ == "__main__":
     # === Instantiate users
     james_bond = User(user_id="007", balance=100.0)
