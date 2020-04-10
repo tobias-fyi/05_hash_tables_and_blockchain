@@ -71,12 +71,20 @@ if __name__ == "__main__":
         print("\nRequesting last proof from server...")
         r = requests.get(url=node + "/last_proof")
         # Parse the response to get last proof
-        data = r.json()
-        last_proof = data.get("proof")
+        try:
+            data = r.json()
+        except ValueError:
+            print("Error: Non-JSON response")
+            print(r)
+            break
 
         # The Emperor's New Proof!
+        last_proof = data.get("proof")
         print(f"Starting proof of work using last_proof: {last_proof}")
         new_proof = proof_of_work(last_proof)
+
+        if new_proof is None:
+            continue
 
         print("Sending to server...")
         post_data = {"proof": new_proof, "id": id}
